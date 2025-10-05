@@ -759,4 +759,609 @@ const HTML_TEMPLATE = `<!DOCTYPE html>
                         </ul>
                     </div>
 
-                   
+                    <!-- Connect Column -->
+                    <div class="col-span-1">
+                        <h4 class="text-lg font-semibold text-white mb-4">Connect & Support</h4>
+                        <div class="space-y-3">
+                            <a href="https://elsaadouni.com" class="flex items-center text-gray-400 hover:text-green-400 transition text-sm">
+                                <i class="fas fa-globe mr-3 text-green-400"></i>
+                                Portfolio Website
+                            </a>
+                            <a href="mailto:contact@elsaadouni.com" class="flex items-center text-gray-400 hover:text-green-400 transition text-sm">
+                                <i class="fas fa-envelope mr-3 text-blue-400"></i>
+                                Contact Me
+                            </a>
+                            <a href="https://github.com/elsaadouni" class="flex items-center text-gray-400 hover:text-green-400 transition text-sm">
+                                <i class="fab fa-github mr-3 text-purple-400"></i>
+                                GitHub
+                            </a>
+                            <a href="https://linkedin.com/in/elsaadouni" class="flex items-center text-gray-400 hover:text-green-400 transition text-sm">
+                                <i class="fab fa-linkedin mr-3 text-blue-500"></i>
+                                LinkedIn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <div class="text-gray-400 text-sm mb-4 md:mb-0">
+                            &copy; 2025 <span class="text-green-400 font-semibold">Ultimate Developer Tools</span>. 
+                            All rights reserved. Made with <i class="fas fa-heart text-red-400 mx-1"></i> by 
+                            <a href="https://elsaadouni.com" class="text-green-400 hover:underline ml-1">Mohamed Elsaadouni</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Visitor counter functions
+        async function loadVisitorCount() {
+            try {
+                const response = await fetch('/api/visitors/stats');
+                const data = await response.json();
+                if (data.total !== undefined) {
+                    const formattedCount = data.total.toLocaleString();
+                    document.getElementById('navVisitorCount').textContent = formattedCount;
+                    document.getElementById('heroVisitorCount').textContent = formattedCount;
+                    document.getElementById('footerVisitorCount').textContent = formattedCount;
+                }
+            } catch (error) {
+                console.error('Error loading visitor count:', error);
+            }
+        }
+
+        async function trackPageView() {
+            try {
+                await fetch('/api/visitors/track', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'web' })
+                });
+                loadVisitorCount();
+            } catch (error) {
+                console.error('Error tracking page view:', error);
+            }
+        }
+
+        // Your existing JavaScript functions here...
+        let currentFile = null;
+
+        function copyText(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                showNotification('Element not found', 'error');
+                return;
+            }
+
+            const text = element.value || element.textContent;
+            if (!text || text.trim() === '') {
+                showNotification('Nothing to copy!', 'error');
+                return;
+            }
+
+            copyToClipboard(text);
+        }
+
+        function copyResult(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                showNotification('Element not found', 'error');
+                return;
+            }
+
+            const text = element.textContent || element.value;
+            if (!text || text.trim() === '') {
+                showNotification('Nothing to copy!', 'error');
+                return;
+            }
+
+            copyToClipboard(text);
+        }
+
+        function copyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (successful) {
+                    showNotification('Copied to clipboard!', 'success');
+                } else {
+                    showNotification('Failed to copy text', 'error');
+                }
+            } catch (err) {
+                document.body.removeChild(textArea);
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        showNotification('Copied to clipboard!', 'success');
+                    }).catch(() => {
+                        showNotification('Failed to copy text', 'error');
+                    });
+                } else {
+                    showNotification('Failed to copy text', 'error');
+                }
+            }
+        }
+
+        function clearField(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
+                    element.value = '';
+                } else {
+                    element.textContent = '';
+                }
+                showNotification('Field cleared!', 'success');
+            }
+        }
+
+        // Base64 Text Functions
+        function base64EncodeText() {
+            const input = document.getElementById('base64Input').value;
+            if (!input) return showNotification('Please enter text to encode', 'error');
+            
+            try {
+                const encoded = btoa(unescape(encodeURIComponent(input)));
+                document.getElementById('base64Output').textContent = encoded;
+                showNotification('Text encoded successfully!', 'success');
+            } catch (error) {
+                showNotification('Error: ' + error.message, 'error');
+            }
+        }
+
+        function base64DecodeText() {
+            const input = document.getElementById('base64Input').value;
+            if (!input) return showNotification('Please enter Base64 to decode', 'error');
+            
+            try {
+                const decoded = decodeURIComponent(escape(atob(input)));
+                document.getElementById('base64Output').textContent = decoded;
+                showNotification('Text decoded successfully!', 'success');
+            } catch (error) {
+                showNotification('Error: Invalid Base64 string', 'error');
+            }
+        }
+
+        // File Base64 Functions
+        function setupFileDropzone() {
+            const dropzone = document.getElementById('fileEncodeDropzone');
+            const fileInput = document.getElementById('fileInput');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, () => {
+                    dropzone.classList.add('dragover');
+                }, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, () => {
+                    dropzone.classList.remove('dragover');
+                }, false);
+            });
+            
+            dropzone.addEventListener('drop', handleDrop, false);
+            fileInput.addEventListener('change', handleFileSelect, false);
+        }
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+        
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+        
+        function handleFiles(files) {
+            if (files.length > 0) {
+                currentFile = files[0];
+                document.getElementById('selectedFileName').textContent = currentFile.name + ' (' + formatFileSize(currentFile.size) + ')';
+                showNotification('File selected: ' + currentFile.name, 'success');
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function encodeFileToBase64() {
+            if (!currentFile) return showNotification('Please select a file first', 'error');
+            
+            // Show file size warning for large files
+            if (currentFile.size > 10 * 1024 * 1024) {
+                if (!confirm('This file is large (' + formatFileSize(currentFile.size) + '). Encoding may take a while. Continue?')) {
+                    return;
+                }
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result.split(',')[1];
+                
+                // Truncate large files for display
+                if (base64.length > 5000) {
+                    const truncated = base64.substring(0, 5000) + '... [TRUNCATED - FILE TOO LARGE FOR DISPLAY]';
+                    document.getElementById('fileOutputContent').textContent = truncated;
+                    document.getElementById('fileOutput').classList.remove('hidden');
+                    showNotification('File encoded! Large file truncated for display. Use download for full file.', 'success');
+                } else {
+                    document.getElementById('fileOutputContent').textContent = base64;
+                    document.getElementById('fileOutput').classList.remove('hidden');
+                    showNotification('File encoded to Base64 successfully!', 'success');
+                }
+            };
+            reader.onerror = function() {
+                showNotification('Error reading file', 'error');
+            };
+            reader.readAsDataURL(currentFile);
+        }
+        
+        function decodeBase64ToFile() {
+            const base64String = document.getElementById('base64FileInput').value.trim();
+            if (!base64String) return showNotification('Please enter Base64 string', 'error');
+            
+            const fileName = document.getElementById('fileName').value || 'output';
+            const fileExtension = document.getElementById('fileExtension').value;
+            const fullFileName = fileName + '.' + fileExtension;
+            
+            try {
+                const cleanBase64 = base64String.replace(/^data:[^;]+;base64,/, '');
+                const binaryString = atob(cleanBase64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                const blob = new Blob([bytes]);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fullFileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('File downloaded: ' + fullFileName, 'success');
+            } catch (error) {
+                showNotification('Error: Invalid Base64 string - ' + error.message, 'error');
+            }
+        }
+        
+        function clearFileEncode() {
+            currentFile = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('selectedFileName').textContent = 'No file selected';
+            document.getElementById('fileOutput').classList.add('hidden');
+            document.getElementById('fileOutputContent').textContent = '';
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 p-4 rounded-lg border-l-4 z-50 ' +
+                (type === 'success' ? 'bg-green-900 border-green-400 text-green-200' : 'bg-red-900 border-red-400 text-red-200');
+            notification.innerHTML = 
+                '<div class="flex items-center">' +
+                '<i class="fas ' + (type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle') + ' mr-2"></i>' +
+                '<span>' + message + '</span>' +
+                '</div>';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFileDropzone();
+            loadVisitorCount();
+            trackPageView();
+        });
+    </script>
+</body>
+</html>`;
+
+// Create HTTP server
+const server = http.createServer((req, res) => {
+  const parsedUrl = url.parse(req.url, true);
+  const path = parsedUrl.pathname;
+  const trimmedPath = path.replace(/^\/+|\/+$/g, '');
+
+  // Track visitor for web requests
+  if (req.method === 'GET' && !trimmedPath.startsWith('api/')) {
+    trackVisitor('web');
+  }
+
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
+
+  // Health check endpoint
+  if (trimmedPath === 'api/health') {
+    trackVisitor('api');
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      status: 'OK',
+      message: 'Ultimate Developer Tools API is running by elsaadouni.com',
+      timestamp: new Date().toISOString(),
+      visitors: getVisitorStats().total
+    }));
+    return;
+  }
+
+  // Visitor stats endpoint
+  if (trimmedPath === 'api/visitors/stats' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(getVisitorStats()));
+    return;
+  }
+
+  // Track visitor endpoint
+  if (trimmedPath === 'api/visitors/track' && req.method === 'POST') {
+    const decoder = new StringDecoder('utf-8');
+    let buffer = '';
+
+    req.on('data', (data) => {
+      buffer += decoder.write(data);
+    });
+
+    req.on('end', () => {
+      buffer += decoder.end();
+      try {
+        const payload = buffer ? JSON.parse(buffer) : {};
+        const type = payload.type || 'web';
+        const stats = trackVisitor(type);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, stats }));
+      } catch (error) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid JSON' }));
+      }
+    });
+    return;
+  }
+
+  // Handle API endpoints
+  if (req.method === 'POST' && trimmedPath.startsWith('api/')) {
+    trackVisitor('api');
+    const decoder = new StringDecoder('utf-8');
+    let buffer = '';
+
+    req.on('data', (data) => {
+      buffer += decoder.write(data);
+    });
+
+    req.on('end', () => {
+      buffer += decoder.end();
+
+      try {
+        const payload = buffer ? JSON.parse(buffer) : {};
+        let result;
+
+        try {
+          switch (trimmedPath) {
+            case 'api/base64/encode':
+              if (!payload.text) throw new Error('Text is required');
+              result = { encoded: base64Encode(payload.text) };
+              break;
+            case 'api/base64/decode':
+              if (!payload.encoded) throw new Error('Encoded string is required');
+              result = { decoded: base64Decode(payload.encoded) };
+              break;
+            case 'api/convert/xml-to-json':
+              if (!payload.xml) throw new Error('XML is required');
+              result = xmlToJson(payload.xml);
+              break;
+            case 'api/convert/json-to-xml':
+              if (!payload.json) throw new Error('JSON is required');
+              result = { xml: jsonToXml(payload.json) };
+              break;
+            case 'api/convert/csv-to-json':
+              if (!payload.csv) throw new Error('CSV is required');
+              result = { json: csvToJson(payload.csv) };
+              break;
+            case 'api/convert/csv-to-xml':
+              if (!payload.csv) throw new Error('CSV is required');
+              result = { xml: csvToXml(payload.csv) };
+              break;
+            case 'api/convert/url-encode':
+              if (!payload.text) throw new Error('Text is required');
+              result = { encoded: urlEncode(payload.text) };
+              break;
+            case 'api/convert/url-decode':
+              if (!payload.encoded) throw new Error('Encoded string is required');
+              result = { decoded: urlDecode(payload.encoded) };
+              break;
+            case 'api/convert/timestamp':
+              if (!payload.timestamp) throw new Error('Timestamp is required');
+              result = { result: unixTimestampConverter(payload.timestamp) };
+              break;
+            case 'api/format/json':
+              if (!payload.json) throw new Error('JSON is required');
+              result = { formatted: formatJSON(payload.json) };
+              break;
+            case 'api/format/json-minify':
+              if (!payload.json) throw new Error('JSON is required');
+              result = { formatted: minifyJSON(payload.json) };
+              break;
+            case 'api/format/xml-minify':
+              if (!payload.xml) throw new Error('XML is required');
+              result = { formatted: minifyXML(payload.xml) };
+              break;
+            case 'api/generate/password':
+              const length = payload.length || 12;
+              const pwdType = payload.type || 'all';
+              let options = {};
+              if (pwdType === 'alphanumeric') {
+                options = { symbols: false };
+              } else if (pwdType === 'letters') {
+                options = { symbols: false, numbers: false };
+              } else if (pwdType === 'numbers') {
+                options = { symbols: false, uppercase: false, lowercase: false };
+              } else {
+                options = { symbols: true };
+              }
+              result = { password: generatePassword(length, options) };
+              break;
+            case 'api/generate/hash':
+              if (!payload.text || !payload.algorithm) throw new Error('Text and algorithm are required');
+              result = { hash: calculateHash(payload.text, payload.algorithm) };
+              break;
+            case 'api/generate/uuid':
+              result = { uuid: generateUUID() };
+              break;
+            case 'api/generate/random':
+              const randomLength = payload.length || 32;
+              result = { random: generateRandomString(randomLength) };
+              break;
+            case 'api/decode/jwt':
+              if (!payload.token) throw new Error('JWT token is required');
+              result = { decoded: jwtDecode(payload.token) };
+              break;
+            case 'api/compare/text':
+              if (!payload.text1 || !payload.text2) throw new Error('Both texts are required');
+              result = { differences: findDifferences(payload.text1, payload.text2) };
+              break;
+            case 'api/tools/html-escape':
+              if (!payload.text) throw new Error('Text is required');
+              result = { escaped: htmlEscape(payload.text) };
+              break;
+            case 'api/tools/html-unescape':
+              if (!payload.text) throw new Error('Text is required');
+              result = { unescaped: htmlUnescape(payload.text) };
+              break;
+            case 'api/tools/string-length':
+              if (!payload.text) throw new Error('Text is required');
+              result = { length: stringLength(payload.text) };
+              break;
+            case 'api/tools/convert-case':
+              if (!payload.text || !payload.caseType) throw new Error('Text and case type are required');
+              result = { converted: caseConverter(payload.text, payload.caseType) };
+              break;
+            case 'api/tools/format-sql':
+              if (!payload.sql) throw new Error('SQL is required');
+              result = { formatted: sqlFormatter(payload.sql) };
+              break;
+            case 'api/tools/validate-credit-card':
+              if (!payload.number) throw new Error('Credit card number is required');
+              result = { validation: creditCardValidator(payload.number) };
+              break;
+            case 'api/tools/validate-ip':
+              if (!payload.ip) throw new Error('IP address is required');
+              result = { validation: ipAddressValidator(payload.ip) };
+              break;
+            case 'api/tools/validate-mac':
+              if (!payload.mac) throw new Error('MAC address is required');
+              result = { validation: macAddressValidator(payload.mac) };
+              break;
+            case 'api/tools/lorem-ipsum':
+              const loremType = payload.type || 'paragraphs';
+              const count = payload.count || 3;
+              result = { text: loremIpsumGenerator(loremType, count) };
+              break;
+            case 'api/tools/checksum':
+              if (!payload.text || !payload.algorithm) throw new Error('Text and algorithm are required');
+              result = { checksum: checksumCalculator(payload.text, payload.algorithm) };
+              break;
+            case 'api/tools/qr-code':
+              if (!payload.text) throw new Error('Text is required');
+              result = { qrCode: qrCodeGenerator(payload.text) };
+              break;
+            default:
+              throw new Error('Endpoint not found');
+          }
+
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(result));
+        } catch (apiError) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: apiError.message }));
+        }
+      } catch (parseError) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid JSON payload' }));
+      }
+    });
+    return;
+  }
+
+  // Serve the main HTML page for all other routes
+  if (req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(HTML_TEMPLATE);
+    return;
+  }
+
+  // 404 for other methods
+  res.writeHead(404, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Not found' }));
+});
+
+// Start server
+server.listen(PORT, () => {
+  console.log('🚀 Ultimate Developer Tools running on http://localhost:' + PORT);
+  console.log('📍 Health check: http://localhost:' + PORT + '/api/health');
+  console.log('👁️  Visitor tracking enabled - stats: http://localhost:' + PORT + '/api/visitors/stats');
+  console.log('✅ 30+ tools including: Base64, File converters, Password generators, Hash calculators, IT operations tools and more!');
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  console.log('\nShutting down gracefully...');
+  server.close(() => {
+    console.log('Server closed.');
+    process.exit(0);
+  });
+});
