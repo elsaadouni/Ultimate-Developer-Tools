@@ -1,0 +1,31 @@
+{
+  "name": "ultimate-developer-tools",
+  "version": "1.0.0",
+  "description": "Comprehensive collection of 30+ developer utilities and tools",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "production": "NODE_ENV=production node server.js",
+    "test": "node test_bulk.js"
+  },
+  "keywords": [
+    "developer-tools",
+    "utilities",
+    "base64",
+    "converter",
+    "generator",
+    "api"
+  ],
+  "author": "Mohamed Elsaadouni",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
